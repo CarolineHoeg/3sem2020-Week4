@@ -2,6 +2,7 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,16 +30,17 @@ public class Person implements Serializable {
     private Date created;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
     
     public Person() {
     }
 
-    public Person(String firstName, String lastName, String phone) {
+    public Person(String firstName, String lastName, String phone, Address address) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
+        this.address = address;
         this.created = new Date();
         this.lastEdited = this.created;
     }
@@ -97,6 +99,7 @@ public class Person implements Serializable {
 
     public void setAddress(Address address) {
         this.address = address;
+        address.setPerson(this);
     }
    
 }

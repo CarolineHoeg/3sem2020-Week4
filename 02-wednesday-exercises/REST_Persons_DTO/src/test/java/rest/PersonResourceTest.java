@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import dtos.PersonDTO;
+import entities.Address;
 import entities.Person;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -41,6 +42,8 @@ public class PersonResourceTest {
     private static EntityManagerFactory emf;
     private Person p1;
     private Person p2;
+    private Address a1;
+    private Address a2;
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -72,11 +75,14 @@ public class PersonResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        p1 = new Person("John", "Doe", "45871289");
-        p2 = new Person("Jane", "Doe", "45703239");
+        a1 = new Address("Vestergade 26g", "Copenhagen", 1029);
+        a2 = new Address("Vestergade 37a", "Copenhagen", 1029);
+        p1 = new Person("John", "Doe", "45871289", a1);
+        p2 = new Person("Jane", "Doe", "45703239", a2);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
             em.persist(p1);
             em.persist(p2);
             em.getTransaction().commit();
@@ -100,7 +106,7 @@ public class PersonResourceTest {
      */
     @Test
     public void testAddPerson() {
-        PersonDTO p = new PersonDTO("Josephine", "Doe", "56738910");
+        PersonDTO p = new PersonDTO("Josephine", "Doe", "56738910", new Address());
         String json = new Gson().toJson(p);
         given().contentType(ContentType.JSON)
                 .body(json)
@@ -118,7 +124,7 @@ public class PersonResourceTest {
      */
     @Test
     public void testAddPerson_missingInput() {
-        PersonDTO p = new PersonDTO("Josephine", null, "56738910");
+        PersonDTO p = new PersonDTO("Josephine", null, "56738910", new Address());
         String json = new Gson().toJson(p);
         given().contentType(ContentType.JSON)
                 .body(json)

@@ -2,6 +2,7 @@ package facades;
 
 import dtos.PersonDTO;
 import dtos.PersonsDTO;
+import entities.Address;
 import entities.Person;
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
@@ -26,6 +27,8 @@ public class PersonFacadeTest {
     private static PersonFacade facade;
     private Person p1;
     private Person p2;
+    private Address a1;
+    private Address a2;
 
     @BeforeAll
     public static void setUpClass() {
@@ -40,6 +43,7 @@ public class PersonFacadeTest {
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -49,11 +53,14 @@ public class PersonFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        p1 = new Person("John", "Doe", "45871289");
-        p2 = new Person("Jane", "Doe", "45703239");
+        a1 = new Address("Vestergade 26g", "Copenhagen", 1029);
+        a2 = new Address("Vestergade 37a", "Copenhagen", 1029);
+        p1 = new Person("John", "Doe", "45871289", a1);
+        p2 = new Person("Jane", "Doe", "45703239", a2);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
             em.persist(p1);
             em.persist(p2);
             em.getTransaction().commit();
@@ -72,8 +79,8 @@ public class PersonFacadeTest {
         String fName = "Joseph";
         String lName = "Doe";
         String phone = "32190367";
-        PersonDTO exp = new PersonDTO(fName, lName, phone);
-        PersonDTO result = facade.addPerson(fName, lName, phone);
+        PersonDTO exp = new PersonDTO(fName, lName, phone, a1);
+        PersonDTO result = facade.addPerson(fName, lName, phone, a1);
         assertEquals(exp, result);
     }
 
@@ -87,7 +94,7 @@ public class PersonFacadeTest {
         String lName = "Doe";
         String phone = "29836538";
         Exception exception = assertThrows(MissingInputException.class, () -> {
-            facade.addPerson(fName, lName, phone);
+            facade.addPerson(fName, lName, phone, a1);
         });
 
         String expectedMessage = "First Name and/or Last Name is missing";

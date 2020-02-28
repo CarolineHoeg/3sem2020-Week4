@@ -2,6 +2,7 @@ package facades;
 
 import dtos.PersonDTO;
 import dtos.PersonsDTO;
+import entities.Address;
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
 
@@ -11,7 +12,7 @@ import exceptions.PersonNotFoundException;
  */
 public interface IPersonFacade {
 
-    public PersonDTO addPerson(String fName, String lName, String phone)
+    public PersonDTO addPerson(String fName, String lName, String phone, Address address)
             throws MissingInputException;
 
     public PersonDTO deletePerson(int id) throws PersonNotFoundException;

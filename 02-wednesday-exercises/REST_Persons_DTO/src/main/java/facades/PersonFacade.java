@@ -2,9 +2,11 @@ package facades;
 
 import dtos.PersonDTO;
 import dtos.PersonsDTO;
+import entities.Address;
 import entities.Person;
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
@@ -40,13 +42,13 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public PersonDTO addPerson(String fName, String lName, String phone)
+    public PersonDTO addPerson(String fName, String lName, String phone, Address address)
             throws MissingInputException {
         if (fName == null || lName == null) {
             throw new MissingInputException("First Name and/or Last Name is missing");
         } else {
             EntityManager em = getEntityManager();
-            Person p = new Person(fName, lName, phone);
+            Person p = new Person(fName, lName, phone, address);
             em.getTransaction().begin();
             em.persist(p);
             em.getTransaction().commit();
@@ -73,6 +75,8 @@ public class PersonFacade implements IPersonFacade {
         EntityManager em = getEntityManager();
         em.getTransaction().begin();
         Person p = em.find(Person.class, id);
+        Address find = em.find(Address.class, p.getAddress().getId());
+        p.setAddress(find);
         if (p == null) {
             throw new PersonNotFoundException("No person with provided id found");
         }
@@ -85,14 +89,19 @@ public class PersonFacade implements IPersonFacade {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Person> q = em.createNamedQuery("Person.getAll", Person.class);
-            return new PersonsDTO(q.getResultList());
+            List<Person> resultList = q.getResultList();
+            resultList.forEach((p) -> {
+                Address find = em.find(Address.class, p.getAddress().getId());
+                p.setAddress(find);
+            });
+            return new PersonsDTO(resultList);
         } finally {
             em.close();
         }
     }
 
     @Override
-    public PersonDTO editPerson(PersonDTO p) 
+    public PersonDTO editPerson(PersonDTO p)
             throws PersonNotFoundException, MissingInputException {
         if (p.getfName() == null || p.getlName() == null) {
             throw new MissingInputException("First Name and/or Last Name is missing");

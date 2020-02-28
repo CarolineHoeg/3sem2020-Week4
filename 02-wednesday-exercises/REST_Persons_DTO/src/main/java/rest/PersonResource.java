@@ -44,7 +44,8 @@ public class PersonResource {
     public Response addPerson(String json) {
         try {
             PersonDTO p = GSON.fromJson(json, PersonDTO.class);
-            PersonDTO person = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone());
+            PersonDTO person = FACADE.addPerson(p.getfName(), p.getlName(),
+                    p.getPhone(), p.getAddress());
             return Response.ok(GSON.toJson(person)).build();
         } catch (MissingInputException e) {
             return EXCEPTION_MAPPER.toResponse(e);

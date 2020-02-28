@@ -1,5 +1,6 @@
 package dtos;
 
+import entities.Address;
 import entities.Person;
 import java.util.Objects;
 
@@ -13,18 +14,21 @@ public class PersonDTO {
     private String fName;
     private String lName;
     private String phone;
+    private Address address;
 
     public PersonDTO(Person p) {
         this.fName = p.getFirstName();
         this.lName = p.getLastName();
         this.phone = p.getPhone();
         this.id = p.getId();
+        this.address = p.getAddress();
     }
 
-    public PersonDTO(String fn, String ln, String phone) {
+    public PersonDTO(String fn, String ln, String phone, Address address) {
         this.fName = fn;
         this.lName = ln;
         this.phone = phone;
+        this.address = address;
     }
 
     public PersonDTO() {
@@ -62,6 +66,25 @@ public class PersonDTO {
         this.phone = phone;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + this.id;
+        hash = 97 * hash + Objects.hashCode(this.fName);
+        hash = 97 * hash + Objects.hashCode(this.lName);
+        hash = 97 * hash + Objects.hashCode(this.phone);
+        hash = 97 * hash + Objects.hashCode(this.address);
+        return hash;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -86,17 +109,10 @@ public class PersonDTO {
         if (!Objects.equals(this.phone, other.phone)) {
             return false;
         }
+        if (!Objects.equals(this.address, other.address)) {
+            return false;
+        }
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + this.id;
-        hash = 41 * hash + Objects.hashCode(this.fName);
-        hash = 41 * hash + Objects.hashCode(this.lName);
-        hash = 41 * hash + Objects.hashCode(this.phone);
-        return hash;
     }
 
 }
