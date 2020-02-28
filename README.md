@@ -11,7 +11,7 @@
 3. JPQL, REST, Error Handling, JAX-RS Annotations, Postman, Rest Assured
 
 ## Friday
-1.
+1. I completed all green exercises and the first yellow.
 2. Solutions to the exercises can be found in the folder "03-friday-exercises".
 3. ORM, JPQL, JPA
 
